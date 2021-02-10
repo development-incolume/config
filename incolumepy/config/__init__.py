@@ -125,38 +125,63 @@ class SettingsMigrate(Settings, ABC):
     def to_cfg(self):
         config = configparser.ConfigParser()
         config.read_dict(self.to_dict())
-        output = self.output.with_suffix('.cfg') or self.filename.with_suffix('.cfg')
-        with output.open('w') as file:
-            config.write(file)
-        return True
+        output = self.output.with_suffix('.cfg') if self.output else self.filename.with_suffix('.cfg')
+        try:
+            with output.open('x') as file:
+                config.write(file)
+            return True
+        except FileExistsError:
+            pass
 
     def to_ini(self):
         config = configparser.ConfigParser()
         config.read_dict(self.to_dict())
-        output = self.output.with_suffix('.ini') or self.filename.with_suffix('.ini')
-        with output.open('w') as file:
-            config.write(file)
-        return True
+        output = self.output.with_suffix('.ini') if self.output else self.filename.with_suffix('.ini')
+        try:
+            with output.open('x') as file:
+                config.write(file)
+            return True
+        except FileExistsError:
+            pass
 
     def to_json(self):
-        output = self.output.with_suffix('.json') or self.filename.with_suffix('.json')
-        with output.open('w') as file:
-            json.dump(self.content, file, indent=4)
-        return True
+        output = self.output.with_suffix('.json') if self.output else self.filename.with_suffix('.json')
+        try:
+            with output.open('x') as file:
+                json.dump(self.content, file, indent=4)
+            return True
+        except FileExistsError:
+            pass
 
     def to_toml(self):
-        output = self.output.with_suffix('.toml') or self.filename.with_suffix('.toml')
-        with output.open('w') as file:
-            toml.dump(self.content, file)
-        return True
+        output = self.output.with_suffix('.toml') if self.output else self.filename.with_suffix('.toml')
+        try:
+            with output.open('x') as file:
+                toml.dump(self.content, file)
+            return True
+        except FileExistsError:
+            pass
 
     def to_yaml(self):
-        output = self.output.with_suffix('.yaml') or self.filename.with_suffix('.yaml')
-        with output.open('w') as file:
-            yaml.dump(self.content, file)
+        output = self.output.with_suffix('.yaml') if self.output else self.filename.with_suffix('.yaml')
+        try:
+            with output.open('x') as file:
+                yaml.dump(self.content, file)
+        except FileExistsError:
+            pass
+
+
+def run():
+    n = SettingsMigrate(__package__ / 'settings/config.toml')
+    n.to_cfg()
+    n.to_ini()
+    n.to_json()
+    n.to_toml()
+    n.to_yaml()
 
 
 if __name__ == '__main__':
+    run()
     o = SettingsMigrate(__package__ / 'settings/config.json', __package__ / 'output/output_from_json.txt')
     o.read()
     print(o.content)
