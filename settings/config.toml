@@ -1,0 +1,11 @@
+[project]
+updated = "ter 09 fev 2021 22:23:47 -03"
+author = "Ricardo Brito do Nascimento"
+
+[sqlite]
+  [sqlite.dev]
+    file = "db/dev.sqlite"
+  [sqlite.hom]
+    file = "db/hom.sqlite"
+  [sqlite.prod]
+    file = "db/prod.sqlite"
