@@ -7,7 +7,10 @@ import configparser
 import json
 import toml
 import yaml
+import incolumepy.config
 
+
+incolumepy.config.run()
 
 print("# read config toml")
 config = toml.load('settings/config.toml')
