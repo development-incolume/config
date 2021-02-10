@@ -15,6 +15,15 @@ __package__ = Path(__file__).parent.parent.parent
 assert __package__.is_dir(), f"{__package__}"
 
 
+class MyParser(configparser.ConfigParser):
+    def as_dict(self):
+        d = dict(self._sections)
+        for k in d:
+            d[k] = dict(self._defaults, **d[k])
+            d[k].pop('__name__', None)
+        return d
+
+
 class Settings(metaclass=abc.ABCMeta):
     def __init__(self, filename):
         self.filename = filename
@@ -84,9 +93,30 @@ class SettingsMigrate(Settings, ABC):
                 self.content = yaml.load(f, Loader=yaml.FullLoader)
 
         if self.filename.name.endswith('.ini') or self.filename.name.endswith('.cfg'):
+            # # https://stackoverflow.com/a/3220891/5132101
+            # config = MyParser()
+            # config.read(self.filename)
+            # self.content = config.as_dict()
+
+            # config = configparser.ConfigParser()
+            # config.read(self.filename)
+            # # https://stackoverflow.com/a/3220740/5132101
+            # dictionary = {}
+            # for section in config.sections():
+            #     dictionary[section] = {}
+            #     for option in config.options(section):
+            #         dictionary[section][option] = config.get(section, option)
+            # self.content = dictionary
+
+            # config = configparser.ConfigParser()
+            # config.read(self.filename)
+            # # https://stackoverflow.com/a/36547478/5132101
+            # self.content = {section: dict(config.items(section)) for section in config.sections()}
+
             config = configparser.ConfigParser()
             config.read(self.filename)
-            self.content = config.__dict__['_sections']     # https://stackoverflow.com/a/3220887/5132101
+            # https://stackoverflow.com/a/3220887/5132101
+            self.content = config.__dict__['_sections']
 
     def to_dict(self):
         self.read()
@@ -127,7 +157,7 @@ class SettingsMigrate(Settings, ABC):
 
 
 if __name__ == '__main__':
-    o = SettingsMigrate(__package__ / 'settings/config.ini', __package__ / 'output/output_from_ini.txt')
+    o = SettingsMigrate(__package__ / 'settings/config.json', __package__ / 'output/output_from_json.txt')
     o.read()
     print(o.content)
     o.to_cfg()
