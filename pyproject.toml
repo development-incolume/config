@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "incolumepy.config"
+version = "0.1.0"
+description = "Exemplos de utilização de configuração Python para .(ini|cfg|toml|yaml|json)."
+authors = ["Britodfbr <britodfbr@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9.1"
+toml = "^0.10.2"
+PyYAML = "^5.4.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
